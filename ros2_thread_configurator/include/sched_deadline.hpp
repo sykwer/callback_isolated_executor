@@ -1,3 +1,4 @@
+#pragma once
 #include <linux/sched.h>
 #include <sched.h>
 #include <sys/syscall.h>

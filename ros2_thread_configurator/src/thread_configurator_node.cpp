@@ -87,8 +87,8 @@ bool ThreadConfiguratorNode::set_affinity_by_cgroup(int64_t thread_id, const std
   }
 
   std::string tasks_path = cgroup_path + "/tasks";
-  if (std::ofstream procs_file{tasks_path}) {
-    procs_file << thread_id;
+  if (std::ofstream tasks_file{tasks_path}) {
+    tasks_file << thread_id;
   } else {
     return false;
   }
