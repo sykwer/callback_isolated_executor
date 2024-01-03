@@ -15,6 +15,12 @@ class ThreadConfiguratorNode : public rclcpp::Node {
     std::vector<int> affinity;
     std::string policy;
     int priority;
+
+    // For SCHED_DEADLINE
+    unsigned int runtime;
+    unsigned int period;
+    unsigned int deadline;
+
     bool applied = false;
   };
 

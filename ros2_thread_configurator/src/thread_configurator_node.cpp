@@ -2,7 +2,6 @@
 #include <unordered_map>
 
 #include <error.h>
-#include <sched.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <unistd.h>
@@ -12,6 +11,7 @@
 
 #include "thread_config_msgs/msg/callback_group_info.hpp"
 #include "thread_configurator_node.hpp"
+#include "sched_deadline.hpp"
 
 ThreadConfiguratorNode::ThreadConfiguratorNode(const YAML::Node &yaml) : Node("thread_configurator_node"), unapplied_num_(0) {
   {
@@ -27,6 +27,12 @@ ThreadConfiguratorNode::ThreadConfiguratorNode(const YAML::Node &yaml) : Node("t
       for (auto &cpu : callback_group["affinity"]) config.affinity.push_back(cpu.as<int>());
       config.policy = callback_group["policy"].as<std::string>();
       config.priority = callback_group["priority"].as<int>();
+
+      if (config.policy == "SCHED_DEADLINE") {
+        config.runtime = callback_group["runtime"].as<unsigned int>();
+        config.period = callback_group["period"].as<unsigned int>();
+        config.deadline = callback_group["deadline"].as<unsigned int>();
+      }
 
       id_to_callback_group_config_[config.callback_group_id] = &config;
     }
@@ -95,6 +101,24 @@ bool ThreadConfiguratorNode::issue_syscalls(const CallbackGroupConfig &config) c
     };
 
     if (sched_setscheduler(config.thread_id, m[config.policy], &param) == -1) {
+      RCLCPP_ERROR(this->get_logger(), "Failed to configure policy (id=%s, tid=%ld): %s",
+          config.callback_group_id.c_str(), config.thread_id, strerror(errno));
+      return false;
+    }
+
+  } else if (config.policy == "SCHED_DEADLINE") {
+    struct sched_attr attr;
+    attr.size = sizeof(attr);
+    attr.sched_flags = 0;
+    attr.sched_nice = 0;
+    attr.sched_priority = 0;
+
+    attr.sched_policy = SCHED_DEADLINE;
+    attr.sched_runtime = config.runtime;
+    attr.sched_period = config.period;
+    attr.sched_deadline = config.deadline;
+
+    if (sched_setattr(config.thread_id, &attr, 0) == -1) {
       RCLCPP_ERROR(this->get_logger(), "Failed to configure policy (id=%s, tid=%ld): %s",
           config.callback_group_id.c_str(), config.thread_id, strerror(errno));
       return false;
