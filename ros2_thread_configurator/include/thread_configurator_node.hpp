@@ -26,11 +26,13 @@ class ThreadConfiguratorNode : public rclcpp::Node {
 
 public:
   ThreadConfiguratorNode(const YAML::Node &yaml);
+  ~ThreadConfiguratorNode();
   bool all_applied();
   void print_all_unapplied();
 
 private:
-  bool issue_syscalls(const CallbackGroupConfig &config) const;
+  bool set_affinity_by_cgroup(int64_t thread_id, const std::vector<int>& cpus);
+  bool issue_syscalls(const CallbackGroupConfig &config);
   void topic_callback(const thread_config_msgs::msg::CallbackGroupInfo::SharedPtr msg);
 
   rclcpp::Subscription<thread_config_msgs::msg::CallbackGroupInfo>::SharedPtr subscription_;
@@ -38,5 +40,6 @@ private:
   std::vector<CallbackGroupConfig> callback_group_configs_;
   std::unordered_map<std::string, CallbackGroupConfig*> id_to_callback_group_config_;
   int unapplied_num_;
+  int cgroup_num_;
 };
 

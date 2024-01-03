@@ -1,5 +1,7 @@
 #include <string>
 #include <unordered_map>
+#include <fstream>
+#include <filesystem>
 
 #include <error.h>
 #include <sys/time.h>
@@ -13,7 +15,7 @@
 #include "thread_configurator_node.hpp"
 #include "sched_deadline.hpp"
 
-ThreadConfiguratorNode::ThreadConfiguratorNode(const YAML::Node &yaml) : Node("thread_configurator_node"), unapplied_num_(0) {
+ThreadConfiguratorNode::ThreadConfiguratorNode(const YAML::Node &yaml) : Node("thread_configurator_node"), unapplied_num_(0), cgroup_num_(0) {
   {
     YAML::Node callback_groups = yaml["callback_groups"];
     unapplied_num_ = callback_groups.size();
@@ -42,6 +44,14 @@ ThreadConfiguratorNode::ThreadConfiguratorNode(const YAML::Node &yaml) : Node("t
     "/ros2_thread_configurator/callback_group_info", 0 /* infinite queue size*/, std::bind(&ThreadConfiguratorNode::topic_callback, this, std::placeholders::_1));
 }
 
+ThreadConfiguratorNode::~ThreadConfiguratorNode() {
+  if (cgroup_num_ > 0) {
+    for (int i = 0; i < cgroup_num_; i++) {
+      rmdir(("/sys/fs/cgroup/cpuset/" + std::to_string(i)).c_str());
+    }
+  }
+}
+
 bool ThreadConfiguratorNode::all_applied() {
   return unapplied_num_ == 0;
 }
@@ -56,18 +66,37 @@ void ThreadConfiguratorNode::print_all_unapplied() {
   }
 }
 
-bool ThreadConfiguratorNode::issue_syscalls(const CallbackGroupConfig &config) const {
-  if (config.affinity.size() > 0) {
-    cpu_set_t set;
-    CPU_ZERO(&set);
-    for (int cpu : config.affinity) CPU_SET(cpu, &set);
-    if (sched_setaffinity(config.thread_id, sizeof(set), &set) == -1) {
-      RCLCPP_ERROR(this->get_logger(), "Failed to configure affinity (id=%s, tid=%ld): %s",
-          config.callback_group_id.c_str(), config.thread_id, strerror(errno));
-      return false;
-    }
+bool ThreadConfiguratorNode::set_affinity_by_cgroup(int64_t thread_id, const std::vector<int>& cpus) {
+  std::string cgroup_path = "/sys/fs/cgroup/cpuset/" + std::to_string(cgroup_num_++);
+  if (!std::filesystem::create_directory(cgroup_path)) {
+    return false;
   }
 
+  std::string cpus_path = cgroup_path + "/cpuset.cpus";
+  if (std::ofstream cpus_file{cpus_path}) {
+    for (int cpu : cpus) cpus_file << cpu << ",";
+  } else {
+    return false;
+  }
+
+  std::string mems_path = cgroup_path + "/cpuset.mems";
+  if (std::ofstream mems_file{mems_path}) {
+    mems_file << 0;
+  } else {
+    return false;
+  }
+
+  std::string tasks_path = cgroup_path + "/tasks";
+  if (std::ofstream procs_file{tasks_path}) {
+    procs_file << thread_id;
+  } else {
+    return false;
+  }
+
+  return true;
+}
+
+bool ThreadConfiguratorNode::issue_syscalls(const CallbackGroupConfig &config) {
   if (config.policy == "SCHED_OTHER" || config.policy == "SCHED_BATCH" || config.policy == "SCHED_IDLE") {
     struct sched_param param;
     param.sched_priority = 0;
@@ -122,6 +151,26 @@ bool ThreadConfiguratorNode::issue_syscalls(const CallbackGroupConfig &config) c
       RCLCPP_ERROR(this->get_logger(), "Failed to configure policy (id=%s, tid=%ld): %s",
           config.callback_group_id.c_str(), config.thread_id, strerror(errno));
       return false;
+    }
+  }
+
+  if (config.affinity.size() > 0) {
+    if (config.policy == "SCHED_DEADLINE") {
+      if (!set_affinity_by_cgroup(config.thread_id, config.affinity)) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to configure affinity (id=%s, tid=%ld): %s",
+            config.callback_group_id.c_str(), config.thread_id, "Please disable cgroup v2 if used: `systemd.unified_cgroup_hierarchy=0`");
+        return false;
+        }
+
+    } else {
+      cpu_set_t set;
+      CPU_ZERO(&set);
+      for (int cpu : config.affinity) CPU_SET(cpu, &set);
+      if (sched_setaffinity(config.thread_id, sizeof(set), &set) == -1) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to configure affinity (id=%s, tid=%ld): %s",
+            config.callback_group_id.c_str(), config.thread_id, strerror(errno));
+        return false;
+      }
     }
   }
 
