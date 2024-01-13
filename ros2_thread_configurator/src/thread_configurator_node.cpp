@@ -28,12 +28,13 @@ ThreadConfiguratorNode::ThreadConfiguratorNode(const YAML::Node &yaml) : Node("t
       config.callback_group_id = callback_group["id"].as<std::string>();
       for (auto &cpu : callback_group["affinity"]) config.affinity.push_back(cpu.as<int>());
       config.policy = callback_group["policy"].as<std::string>();
-      config.priority = callback_group["priority"].as<int>();
 
       if (config.policy == "SCHED_DEADLINE") {
         config.runtime = callback_group["runtime"].as<unsigned int>();
         config.period = callback_group["period"].as<unsigned int>();
         config.deadline = callback_group["deadline"].as<unsigned int>();
+      } else {
+        config.priority = callback_group["priority"].as<int>();
       }
 
       id_to_callback_group_config_[config.callback_group_id] = &config;
