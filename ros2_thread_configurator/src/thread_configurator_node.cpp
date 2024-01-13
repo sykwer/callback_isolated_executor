@@ -37,12 +37,26 @@ ThreadConfiguratorNode::ThreadConfiguratorNode(const YAML::Node &yaml) : Node("t
         config.priority = callback_group["priority"].as<int>();
       }
 
+      if (config.policy == "SCHED_DEADLINE") {
+        config.runtime = callback_group["runtime"].as<unsigned int>();
+        config.period = callback_group["period"].as<unsigned int>();
+        config.deadline = callback_group["deadline"].as<unsigned int>();
+      }
+
       id_to_callback_group_config_[config.callback_group_id] = &config;
     }
   }
 
   subscription_ = this->create_subscription<thread_config_msgs::msg::CallbackGroupInfo>(
     "/ros2_thread_configurator/callback_group_info", rclcpp::QoS(10).keep_all(), std::bind(&ThreadConfiguratorNode::topic_callback, this, std::placeholders::_1));
+}
+
+ThreadConfiguratorNode::~ThreadConfiguratorNode() {
+  if (cgroup_num_ > 0) {
+    for (int i = 0; i < cgroup_num_; i++) {
+      rmdir(("/sys/fs/cgroup/cpuset/" + std::to_string(i)).c_str());
+    }
+  }
 }
 
 ThreadConfiguratorNode::~ThreadConfiguratorNode() {
