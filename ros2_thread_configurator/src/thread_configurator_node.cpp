@@ -42,7 +42,7 @@ ThreadConfiguratorNode::ThreadConfiguratorNode(const YAML::Node &yaml) : Node("t
   }
 
   subscription_ = this->create_subscription<thread_config_msgs::msg::CallbackGroupInfo>(
-    "/ros2_thread_configurator/callback_group_info", 0 /* infinite queue size*/, std::bind(&ThreadConfiguratorNode::topic_callback, this, std::placeholders::_1));
+    "/ros2_thread_configurator/callback_group_info", rclcpp::QoS(10).keep_all(), std::bind(&ThreadConfiguratorNode::topic_callback, this, std::placeholders::_1));
 }
 
 ThreadConfiguratorNode::~ThreadConfiguratorNode() {
