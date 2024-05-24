@@ -20,7 +20,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/node_factory.hpp>
 #include <rclcpp_components/node_factory_template.hpp>
-#include "static_callback_isolated_executor.hpp"
+#include <static_callback_isolated_executor.hpp>
 
 #define NODE_MAIN_LOGGER_NAME "@node@"
 
@@ -65,10 +65,10 @@ int main(int argc, char * argv[])
 
   exec.spin();
 
-  //for (auto wrapper : node_wrappers) {
-  //  exec.remove_node(wrapper.get_node_base_interface());
-  //}
-  node_wrappers.clear();
+  /*for (auto wrapper : node_wrappers) {
+    exec.remove_node(wrapper.get_node_base_interface());
+  }
+  node_wrappers.clear();*/
 
   rclcpp::shutdown();
 

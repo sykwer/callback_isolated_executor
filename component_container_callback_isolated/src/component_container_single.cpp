@@ -33,4 +33,5 @@ int main(int argc, char * argv[])
   auto node = std::make_shared<rclcpp_components::ComponentManager>(exec);
   exec->add_node(node);
   exec->spin();
+  exec->remove_node(node);
 }

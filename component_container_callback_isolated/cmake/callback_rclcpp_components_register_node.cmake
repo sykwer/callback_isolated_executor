@@ -47,7 +47,8 @@ macro(callback_rclcpp_components_register_node target)
   endif()
 
   # default to executor if not specified otherwise
-  set(executor "StaticCallbackIsolatedExecutor")
+  #set(executor "StaticCallbackIsolatedExecutor")
+  set(executor "rclcpp::executors::SingleThreadedExecutor")
   if(NOT "${ARGS_EXECUTOR}" STREQUAL "")
     set(executor ${ARGS_EXECUTOR})
     message(STATUS "Setting executor non-default value ${executor}")

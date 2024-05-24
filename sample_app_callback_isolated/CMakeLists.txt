@@ -30,12 +30,12 @@ ament_target_dependencies(sample_node rclcpp rclcpp_components std_msgs)
 #rclcpp_components_register_nodes(sample_node "SampleNode")
 callback_rclcpp_components_register_node(sample_node
   PLUGIN "SampleNode"
-  EXECUTABLE topic_state_monitor_node
+  EXECUTABLE sample_node_main
 )
 
 #add_executable(sample_node_main src/sample_node_main.cpp)
-#target_link_libraries(sample_node_main sample_node)
-#ament_target_dependencies(sample_node_main rclcpp rclcpp_component_container_callback_isolated)
+target_link_libraries(sample_node_main sample_node)
+ament_target_dependencies(sample_node_main rclcpp rclcpp_component_container_callback_isolated)
 
 # Install the library and executable
 #install(TARGETS

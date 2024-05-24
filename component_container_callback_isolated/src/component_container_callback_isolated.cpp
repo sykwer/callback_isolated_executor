@@ -165,6 +165,6 @@ int main(int argc, char *argv[]) {
 
   executor->add_node(node);
   executor->spin();
-
+  executor->remove_node(node);
   rclcpp::shutdown();
 }
