@@ -43,5 +43,6 @@ int main(int argc, char * argv[])
   auto node = std::make_shared<rclcpp_components::ComponentManagerRt>();
   exec->add_node(node);
   exec->spin();
+  rclcpp::shutdown();
   return 0;
 }
