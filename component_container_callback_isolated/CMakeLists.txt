@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(rclcpp_component_container_callback_isolated)
+project(callback_isolated_executor)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)

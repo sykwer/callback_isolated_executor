@@ -85,15 +85,15 @@ If you are launching a node directly from the main function without using a Comp
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   ...
-  <depend>rclcpp_component_container_callback_isolated</depend>
+  <depend>callback_isolated_executor</depend>
   ...
 </package>
 ```
 ```cmake
 ...
-find_package(rclcpp_component_container_callback_isolated REQUIRED)
+find_package(callback_isolated_executor REQUIRED)
 ...
-ament_target_dependencies(your_executable ... rclcpp_component_container_callback_isolated)
+ament_target_dependencies(your_executable ... callback_isolated_executor)
 ...
 ```
 ```cpp
@@ -123,8 +123,8 @@ For performance reasons, we were using `StaticSingleThreadedExecutor` internally
 If you are launching a node within `ComponentContainerCallbackIsolated`, all you have to do is modify the launch file as below.
 ```xml
 <launch>
-  <node_container pkg="rclcpp_component_container_callback_isolated" exec="component_container_callback_isolated" name="sample_container" namespace="">
-    <composable_node pkg="rclcpp_component_container_callback_isolated" plugin="SampleNode" name="sample_node" namespace="">
+  <node_container pkg="callback_isolated_executor" exec="component_container_callback_isolated" name="sample_container" namespace="">
+    <composable_node pkg="sample_app_callback_isolated" plugin="SampleNode" name="sample_node" namespace="">
       ...
     </composable_node>
   </node_container>
@@ -135,7 +135,7 @@ Or, you can load the node to the existing component container.
 ```xml
 <launch>
     <load_composable_node target="sample_container">
-        <composable_node pkg="rclcpp_component_container_callback_isolated" plugin="SampleNode" name="sample_node" namespace="">
+        <composable_node pkg="sample_app_callback_isolated" plugin="SampleNode" name="sample_node" namespace="">
         </composable_node>
     </load_composable_node>
 </launch>
@@ -226,7 +226,7 @@ To apply settings that include the `SCHED_DEADLINE` policy, press the enter key 
 
 <details>
 <summary>Why delayed configuration of the SCHED_DEADLINE policy?</summary>
-  
+
 We delay the applying of settings with the `SCHED_DEADLINE` policy because Autoware (main application area for this tool) contains nodes that implicitly create new threads immediately after startup, such as the EKF Localizer.
 Threads specified with the `SCHED_DEADLINE` policy are prohibited from creating new child tasks.
 Generally, real-time scheduling policies fail with an `EAGAIN` error when `clone(2)` is issued without the `SCHED_FLAG_RESET_ON_FORK` flag set.

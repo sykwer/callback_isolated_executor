@@ -1,5 +1,5 @@
 # ros2_thread_configurator
-A library that allows you to configure thread scheduling for all callback groups of ROS 2 nodes launched by the `component_container_callback_isolated` package using just one YAML file.
+A library that allows you to configure thread scheduling for all callback groups of ROS 2 nodes launched by the `callback_isolated_executor` package using just one YAML file.
 
 For instructions on how to use this tool, please refer to https://github.com/sykwer/callback_isolated_executor/tree/main?tab=readme-ov-file#usage.
 
