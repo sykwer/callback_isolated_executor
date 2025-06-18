@@ -5,7 +5,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
@@ -37,11 +36,7 @@ target_include_directories(static_callback_isolated_executor PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-set(node_main_template_install_dir "share/${PROJECT_NAME}")
-install(FILES
-  src/node_main.cpp.in
-  DESTINATION ${node_main_template_install_dir}
-)
+
 install(TARGETS static_callback_isolated_executor
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib
@@ -49,17 +44,12 @@ install(TARGETS static_callback_isolated_executor
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
+
 install(
   DIRECTORY include/
   DESTINATION include
 )
 
-install(
-  DIRECTORY cmake
-  DESTINATION share/${PROJECT_NAME}
-)
-
-# Install executables
 install(
   TARGETS component_container_callback_isolated component_container_single
   RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -67,12 +57,6 @@ install(
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)
-
-ament_export_dependencies(ament_index_cpp)
-ament_export_dependencies(class_loader)
-ament_export_dependencies(composition_interfaces)
-ament_export_dependencies(rclcpp)
-ament_export_dependencies(rclcpp_components)
 ament_export_dependencies(ros2_thread_configurator thread_config_msgs)
 
-ament_package(CONFIG_EXTRAS callback_rclcpp_components-extras.cmake.in)
+ament_package()
