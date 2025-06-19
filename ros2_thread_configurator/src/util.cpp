@@ -7,9 +7,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "thread_config_msgs/msg/callback_group_info.hpp"
 
-#include "ros2_thread_configurator.hpp"
+#include "cie_thread_configurator.hpp"
 
-namespace ros2_thread_configurator {
+namespace cie_thread_configurator {
 
 std::string create_callback_group_id(rclcpp::CallbackGroup::SharedPtr group, rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node) {
   std::stringstream ss;
@@ -60,8 +60,8 @@ std::string create_callback_group_id(rclcpp::CallbackGroup::SharedPtr group, rcl
 rclcpp::Publisher<thread_config_msgs::msg::CallbackGroupInfo>::SharedPtr create_client_publisher() {
   static int idx = 1;
 
-  auto node = std::make_shared<rclcpp::Node>("client_node" + std::to_string(idx++), "/ros2_thread_configurator");
-  auto publisher = node->create_publisher<thread_config_msgs::msg::CallbackGroupInfo>("/ros2_thread_configurator/callback_group_info", rclcpp::QoS(1000).keep_all());
+  auto node = std::make_shared<rclcpp::Node>("client_node" + std::to_string(idx++), "/cie_thread_configurator");
+  auto publisher = node->create_publisher<thread_config_msgs::msg::CallbackGroupInfo>("/cie_thread_configurator/callback_group_info", rclcpp::QoS(1000).keep_all());
   return publisher;
 }
 
@@ -76,4 +76,4 @@ void publish_callback_group_info(const rclcpp::Publisher<thread_config_msgs::msg
   rclcpp::sleep_for(std::chrono::milliseconds(500));
 }
 
-} // namespace ros2_thread_configurator
+} // namespace cie_thread_configurator

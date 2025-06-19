@@ -11,7 +11,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 
 find_package(thread_config_msgs REQUIRED)
-find_package(ros2_thread_configurator REQUIRED)
+find_package(cie_thread_configurator REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -25,13 +25,13 @@ if(BUILD_TESTING)
 endif()
 
 add_executable(component_container_callback_isolated src/component_container_callback_isolated.cpp)
-ament_target_dependencies(component_container_callback_isolated rclcpp rclcpp_components ros2_thread_configurator)
+ament_target_dependencies(component_container_callback_isolated rclcpp rclcpp_components cie_thread_configurator)
 
 add_executable(component_container_single src/component_container_single.cpp)
-ament_target_dependencies(component_container_single rclcpp rclcpp_components ros2_thread_configurator)
+ament_target_dependencies(component_container_single rclcpp rclcpp_components cie_thread_configurator)
 
 add_library(static_callback_isolated_executor SHARED src/static_callback_isolated_executor.cpp)
-ament_target_dependencies(static_callback_isolated_executor rclcpp ros2_thread_configurator)
+ament_target_dependencies(static_callback_isolated_executor rclcpp cie_thread_configurator)
 target_include_directories(static_callback_isolated_executor PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
@@ -57,6 +57,6 @@ install(
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)
-ament_export_dependencies(ros2_thread_configurator thread_config_msgs)
+ament_export_dependencies(cie_thread_configurator thread_config_msgs)
 
 ament_package()

@@ -42,7 +42,7 @@ ThreadConfiguratorNode::ThreadConfiguratorNode(const YAML::Node &yaml)
 
   auto qos = rclcpp::QoS(rclcpp::QoSInitialization(RMW_QOS_POLICY_HISTORY_KEEP_LAST, 1000)).reliable();
   subscription_ = this->create_subscription<thread_config_msgs::msg::CallbackGroupInfo>(
-    "/ros2_thread_configurator/callback_group_info", qos, std::bind(&ThreadConfiguratorNode::topic_callback, this, std::placeholders::_1));
+    "/cie_thread_configurator/callback_group_info", qos, std::bind(&ThreadConfiguratorNode::topic_callback, this, std::placeholders::_1));
 }
 
 ThreadConfiguratorNode::~ThreadConfiguratorNode() {

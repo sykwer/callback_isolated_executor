@@ -30,7 +30,7 @@ $ source install/setup.bash
 
 Set capability for the configurator executable to issue the syscalls like `sched_setscheduler(2)`.
 ```
-$ sudo setcap cap_sys_nice+ep ./build/ros2_thread_configurator/thread_configurator_node
+$ sudo setcap cap_sys_nice+ep ./build/cie_thread_configurator/thread_configurator_node
 ```
 
 After elevating the priviridge level, part of dynamic linking functionality gets disabled for the security reason.
@@ -151,7 +151,7 @@ After launching the `prerun` node, launch your ROS 2 application.
 
 To launch the `prerun` node, type the command below.
 ```bash
-$ ros2 run ros2_thread_configurator thread_configurator_node --prerun
+$ ros2 run cie_thread_configurator thread_configurator_node --prerun
 ```
 
 Then launch your ROS 2 application in another terminal window, after which you can see log messages like shown below in the `prerun` node window.
@@ -195,13 +195,13 @@ $ vim your_config.yaml
 ```
 
 For callback groups that do not require configuration, you can either delete the entry entirely or leave it as is because the default values in `template.yaml` are set with default nice values and no affinity settings on the CFS scheduler.
-For the detailed specifications of the configuration file, please refer to https://github.com/sykwer/callback_isolated_executor/tree/main/ros2_thread_configurator#yaml-configuration-file-format.
+For the detailed specifications of the configuration file, please refer to https://github.com/sykwer/callback_isolated_executor/tree/main/cie_thread_configurator#yaml-configuration-file-format.
 
 ### Step5: Launch your app with scheduler configuration
 To launch the target ROS 2 application with the scheduler settings applied from the your_config.yaml you created, first start the configurator node with the following command.
 
 ```bash
-$ ros2 run ros2_thread_configurator thread_configurator_node --config-file your_config.yaml
+$ ros2 run cie_thread_configurator thread_configurator_node --config-file your_config.yaml
 ```
 
 If there is a callback group with the `SCHED_DEADLINE` scheduling policy specified, running the configurator node requires root privileges.
@@ -209,7 +209,7 @@ This is because it is not possible to set threads to SCHED_DEADLINE within the p
 Note that if the target ROS 2 application is operating with a specific ROS_DOMAIN_ID, the configurator node must also be operated with the same ROS_DOMAIN_ID.
 
 ```bash
-$ sudo bash -c "export ROS_DOMAIN_ID=[app domain id]; source /path/to/callback_isolated_executor/install/setup.bash; ros2 run ros2_thread_configurator thread_configurator_node --config-file your_config.yaml"
+$ sudo bash -c "export ROS_DOMAIN_ID=[app domain id]; source /path/to/callback_isolated_executor/install/setup.bash; ros2 run cie_thread_configurator thread_configurator_node --config-file your_config.yaml"
 ```
 
 Immediately after launching the configurator node, it will print the settings and then wait for the target ROS 2 application to start running as follows.

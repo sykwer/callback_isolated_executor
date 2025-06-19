@@ -6,7 +6,7 @@
 
 #include "thread_config_msgs/msg/callback_group_info.hpp"
 
-namespace ros2_thread_configurator {
+namespace cie_thread_configurator {
 
 std::string create_callback_group_id(rclcpp::CallbackGroup::SharedPtr group, rclcpp::Node::SharedPtr node);
 

@@ -17,7 +17,7 @@
   <depend>std_msgs</depend>
 
   <depend>thread_config_msgs</depend>
-  <depend>ros2_thread_configurator</depend>
+  <depend>cie_thread_configurator</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
