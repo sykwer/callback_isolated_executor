@@ -5,7 +5,7 @@
 > Ongoing development continues at:  
 > 👉 https://github.com/tier4/callback_isolated_executor
 > 
-> The `CallbackIsolatedExecutor` is also included in the executor provided by:  
+> The `CallbackIsolatedExecutor` is also included in the executors provided by:  
 > 👉 https://github.com/tier4/agnocast
 
 # callback_isolated_executor
