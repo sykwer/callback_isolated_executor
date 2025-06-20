@@ -14,7 +14,7 @@
 
   <depend>rclcpp</depend>
 
-  <depend>thread_config_msgs</depend>
+  <depend>cie_config_msgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

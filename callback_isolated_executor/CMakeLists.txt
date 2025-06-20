@@ -10,7 +10,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 
-find_package(thread_config_msgs REQUIRED)
+find_package(cie_config_msgs REQUIRED)
 find_package(cie_thread_configurator REQUIRED)
 
 if(BUILD_TESTING)
@@ -57,6 +57,6 @@ install(
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)
-ament_export_dependencies(cie_thread_configurator thread_config_msgs)
+ament_export_dependencies(cie_thread_configurator cie_config_msgs)
 
 ament_package()

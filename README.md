@@ -40,7 +40,7 @@ The file name has to be `*.conf`.
 ```
 /opt/ros/humble/lib
 /opt/ros/humble/lib/x86_64-linux-gnu
-/path/to/callback_isolated_executor/install/thread_config_msgs/lib
+/path/to/callback_isolated_executor/install/cie_config_msgs/lib
 ```
 
 To enable the configuration, type the command below.

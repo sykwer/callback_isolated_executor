@@ -16,7 +16,7 @@
   <depend>rclcpp_components</depend>
   <depend>std_msgs</depend>
 
-  <depend>thread_config_msgs</depend>
+  <depend>cie_config_msgs</depend>
   <depend>cie_thread_configurator</depend>
 
   <export>

@@ -28,7 +28,7 @@ class ComponentManagerCallbackIsolated : public rclcpp_components::ComponentMana
 public:
   template<typename... Args>
   ComponentManagerCallbackIsolated(Args&&... args) : rclcpp_components::ComponentManager(std::forward<Args>(args)...) {
-    client_publisher_ = create_publisher<thread_config_msgs::msg::CallbackGroupInfo>(
+    client_publisher_ = create_publisher<cie_config_msgs::msg::CallbackGroupInfo>(
         "/cie_thread_configurator/callback_group_info", rclcpp::QoS(1000).keep_all());
   }
 
@@ -43,7 +43,7 @@ private:
   bool is_clock_callback_group(rclcpp::CallbackGroup::SharedPtr group);
 
   std::unordered_map<uint64_t, std::list<ExecutorWrapper>> node_id_to_executor_wrappers_;
-  rclcpp::Publisher<thread_config_msgs::msg::CallbackGroupInfo>::SharedPtr client_publisher_;
+  rclcpp::Publisher<cie_config_msgs::msg::CallbackGroupInfo>::SharedPtr client_publisher_;
 };
 
 ComponentManagerCallbackIsolated::~ComponentManagerCallbackIsolated() {

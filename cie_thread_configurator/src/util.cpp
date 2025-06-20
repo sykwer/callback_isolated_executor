@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "rclcpp/rclcpp.hpp"
-#include "thread_config_msgs/msg/callback_group_info.hpp"
+#include "cie_config_msgs/msg/callback_group_info.hpp"
 
 #include "cie_thread_configurator.hpp"
 
@@ -57,17 +57,17 @@ std::string create_callback_group_id(rclcpp::CallbackGroup::SharedPtr group, rcl
   return create_callback_group_id(group, node->get_node_base_interface());
 }
 
-rclcpp::Publisher<thread_config_msgs::msg::CallbackGroupInfo>::SharedPtr create_client_publisher() {
+rclcpp::Publisher<cie_config_msgs::msg::CallbackGroupInfo>::SharedPtr create_client_publisher() {
   static int idx = 1;
 
   auto node = std::make_shared<rclcpp::Node>("client_node" + std::to_string(idx++), "/cie_thread_configurator");
-  auto publisher = node->create_publisher<thread_config_msgs::msg::CallbackGroupInfo>("/cie_thread_configurator/callback_group_info", rclcpp::QoS(1000).keep_all());
+  auto publisher = node->create_publisher<cie_config_msgs::msg::CallbackGroupInfo>("/cie_thread_configurator/callback_group_info", rclcpp::QoS(1000).keep_all());
   return publisher;
 }
 
-void publish_callback_group_info(const rclcpp::Publisher<thread_config_msgs::msg::CallbackGroupInfo>::SharedPtr &publisher,
+void publish_callback_group_info(const rclcpp::Publisher<cie_config_msgs::msg::CallbackGroupInfo>::SharedPtr &publisher,
     int64_t tid, const std::string &callback_group_id) {
-  auto message = std::make_shared<thread_config_msgs::msg::CallbackGroupInfo>();
+  auto message = std::make_shared<cie_config_msgs::msg::CallbackGroupInfo>();
 
   message->thread_id = tid;
   message->callback_group_id = callback_group_id;
