@@ -1,3 +1,13 @@
+> 📌 **Note**
+> 
+> This repository provides the implementation for [this paper](https://arxiv.org/pdf/2505.06546).
+> 
+> Ongoing development continues at:  
+> 👉 https://github.com/tier4/callback_isolated_executor
+> 
+> The `CallbackIsolatedExecutor` is also included in the executor provided by:  
+> 👉 https://github.com/tier4/agnocast
+
 # callback_isolated_executor
 The ComponentContainer and Executor that assign a dedicated thread for each callback group.
 
